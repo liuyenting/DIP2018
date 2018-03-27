@@ -60,9 +60,25 @@ title('S_2');
 set(gca, 'FontSize', 14);
 
 %% Low-pass filter
+Rg = lpf(G1, 7);
 
+figure('Name', 'Filtered Result', 'NumberTitle', 'off');
+subplot(1, 2, 1);
+imshow(Rg);
+title('R_G');
+set(gca, 'FontSize', 14);
 
 %% Median filter
+Rs = medfilter(S1, 3);
+
+subplot(1, 2, 2);
+imshow(Rs);
+title('R_S');
+set(gca, 'FontSize', 14);
 
 %% PSNR
+I3 = cast(I3, dtype);
+
+PSNRg = psnr(Rg, I3)
+PSNRs = psnr(Rs, I3)
 
