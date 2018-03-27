@@ -71,7 +71,7 @@ xlabel('Intensity');
 set(gca, 'FontSize', 14);
 
 %% Transformations
-a = 5;
+a = 10;
 Dlog = inttr(D, @(x) log2(1+a*x));
 
 figure('Name', 'Transformation Results', 'NumberTitle', 'off');
@@ -93,4 +93,17 @@ Dpow = inttr(D, @(x) x.^p);
 subplot(1, 3, 3);
 imshow(Dpow);
 title('x^p, p=3');
+set(gca, 'FontSize', 14);
+
+[H, marks] = histogram(Dpow);
+figure('Name', 'Plotter', 'NumberTitle', 'off', 'Position', [0, 0, 500, 200]);
+bar(marks, H, 'k');
+ylabel('Counts');
+xlabel('Intensity');
+C = cumsum(H);
+C = C / numel(I2);
+yyaxis right
+plot(marks, C, '-r', 'LineWidth', 2);
+ylabel('Fraction', 'Color', 'r');
+set(gca, 'YColor', 'r');
 set(gca, 'FontSize', 14);

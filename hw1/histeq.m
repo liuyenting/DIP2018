@@ -25,28 +25,28 @@ J = inttr(I, @(x) x);
 
 end
 
-function J = adapthisteq(I, r)
+function J = adapthisteq(I, ksz)
 %ADAPTHISTEQ Adaptive (local) histogram equalization.
 %   TBA
 
-if mod(r, 2) == 0
-    error(generagemsgid('InvalidSize'), 'Kernel radius should be even.');
+if mod(ksz, 2) == 0
+    error(generagemsgid('InvalidSize'), 'Kernel size should be odd.');
 end
+r = (ksz-1)/2;
 
 sz = size(I);
 J = zeros(sz, 'like', I);
 
 % zero-pad I
-P = zeros(sz + 2*r, 'like', I);
+P = zeros(sz + ksz-1, 'like', I);
 P(r+1:end-r, r+1:end-r) = I;
 
 % convolve the data with equalization kernel naively
 for j = 1:sz(2)
     for i = 1:sz(1)
-        H = histeq(P(j:j+2*r, i:i+2*r));
+        H = histeq(P(j:j+ksz-1, i:i+ksz-1));
         J(j, i) = H(r+1, r+1);
     end
 end
 
 end
-
