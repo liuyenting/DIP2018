@@ -204,6 +204,8 @@ The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref
 \end{figure}
 
 \subsection*{Second-order edge detection}
+If there is a significant spatial change in the second-derivative, an edge is detected. Second-order derivative operators are more sophisticated methods, yet, they are also very noise-sensitive. 
+
 \paragraph*{Laplacian of Gaussian}
 Laplacian filters are derivative filters used to find areas of rapid changing edges in images.
 
@@ -403,6 +405,30 @@ When taking into consideration greater variety of the edge differences, aka, inc
 Increasing the $\sigma$ increases the differences per variation in pixel intensity, hence the features has greater contrast when comparing results between $n=15$ and $\sigma=5, 10$.
 
 \subsection*{Warping}
+Using reverse lookup of the following equations
+\begin{equation}
+\begin{cases}
+	x(u, v) = u + 20 sin(\frac{2 \pi}{2} \frac{y}{512} ) \\
+	y(u, v) = v + 20 sin(\frac{2 \pi}{3} \frac{x}{512} )
+\end{cases}
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/warp_mask}
+        \caption{Mask}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/warp_c}
+        \caption{D}
+    \end{subfigure}
+    \caption{Warping with $sin$ functions}
+    \label{fig:warp}
+\end{figure}
 
 \section*{Bonus}
 

@@ -35,3 +35,10 @@ Ic = Ic / max(abs(Ic(:)));
 Ic = Ic + 1;
 
 %% Warping
+[xv, yv] = meshgrid(1:512, 1:512);
+
+xqv = xv + 20 * sin(2*pi*yv / 512 * 2);
+yqv = yv + 20 * sin(2*pi*xv / 512 * 3);
+
+Mw = interp2(xv, yv, ones(size(I3)), xqv, yqv);
+Icw = interp2(xv, yv, Ic, xqv, yqv);
