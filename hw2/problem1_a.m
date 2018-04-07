@@ -141,5 +141,3 @@ set(gca, 'FontSize', 14);
 Idog = imconv2(I1, K);
 Idog = Idog / max(abs(Idog(:)));
 Idog = Idog+1;
-
-%% Canny edge detection
