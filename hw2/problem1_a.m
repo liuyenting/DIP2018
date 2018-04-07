@@ -33,12 +33,7 @@ imshow(I1xy, []);
 title('I_{1xy}');
 set(gca, 'FontSize', 14);
 
-% [H, marks] = histogram(I1xy);
-% figure('Name', 'Histogram', 'NumberTitle', 'off');
-% bar(marks, H, 'k');
-% ylabel('Counts');
-% set(gca, 'FontSize', 14);
-
+Iedge = I1xy > mean(I1xy(:))+2*std(I1xy(:));
 
 %% Prewitt
 figure('Name', 'Prewitt Filter', 'NumberTitle', 'off');
@@ -67,6 +62,8 @@ imshow(I1xy, []);
 title('I_{1xy}');
 set(gca, 'FontSize', 14);
 
+Iedge = I1xy > mean(I1xy(:))+2*std(I1xy(:));
+
 %% Sobel
 figure('Name', 'Sobel Filter', 'NumberTitle', 'off');
 subplot(1, 4, 1);
@@ -94,6 +91,40 @@ imshow(I1xy, []);
 title('I_{1xy}');
 set(gca, 'FontSize', 14);
 
+Iedge = I1xy > mean(I1xy(:))+2*std(I1xy(:));
+
 %% 2nd order edge detection
+%% Laplacian of Gaussian (LOG)
+figure('Name', 'LoG', 'NumberTitle', 'off');
+subplot(1, 3, 1);
+imshow(I1, []);
+title('I_1');
+set(gca, 'FontSize', 14);
+
+K = gaussf2(5);
+Ig = imconv2(I1, K);
+
+subplot(1, 3, 2);
+imshow(Ig, []);
+title('LPF(I_1)');
+set(gca, 'FontSize', 14);
+
+Ilog = imconv2(Ig, [0, 1, 0; 1, -4, 1; 0, 1, 0]);
+
+subplot(1, 3, 3);
+imshow(Ilog, []);
+title('LoG(I_1)');
+set(gca, 'FontSize', 14);
+
+[H, marks] = histogram(Ilog);
+figure('Name', 'Histogram', 'NumberTitle', 'off');
+bar(marks, H, 'k');
+ylabel('Counts');
+set(gca, 'FontSize', 14);
+
+Itmp = abs(Ilog);
+Iedge = I1xy > mean(Ilog(:))+2*std(I1xy(:));
+
+%% Difference of Gaussians (DOG)
 
 %% Canny edge detection
