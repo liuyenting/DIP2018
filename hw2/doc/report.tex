@@ -65,34 +65,34 @@ E =
 \end{cases}
 \end{equation}
 
-\begin{figure*}[ht!]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/robert_x}
+        \includegraphics[height=2.5in]{images/robert_x}
         \caption{$I_x$}
     \end{subfigure}%
     ~ 
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/robert_y}
+        \includegraphics[height=2.5in]{images/robert_y}
         \caption{$I_y$}
     \end{subfigure}
     ~
     \vskip\baselineskip
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/robert_xy}
+        \includegraphics[height=2.5in]{images/robert_xy}
         \caption{$I_{xy}$}
     \end{subfigure}%
     ~
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/robert_edge}
+        \includegraphics[height=2.5in]{images/robert_edge}
         \caption{Edge map}
     \end{subfigure}
     \caption{Robert operator}
-\end{figure*}
+\end{figure}
 
 \paragraph*{Prewitt filter} is a discrete differentiation operator, which behaves similar to the Sobel operator by computing the gradient for the image intensity function as well.
 It makes use of the maximum directional gradient. Though it is easy to implement, it is very sensitive to noise as well.
@@ -110,34 +110,34 @@ It makes use of the maximum directional gradient. Though it is easy to implement
 \end{equation}
 The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref{eq:edge_map} as well.
 
-\begin{figure*}[ht!]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/prewitt_x}
+        \includegraphics[height=2.5in]{images/prewitt_x}
         \caption{$I_x$}
     \end{subfigure}%
     ~ 
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/prewitt_y}
+        \includegraphics[height=2.5in]{images/prewitt_y}
         \caption{$I_y$}
     \end{subfigure}
     ~
     \vskip\baselineskip
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/prewitt_xy}
+        \includegraphics[height=2.5in]{images/prewitt_xy}
         \caption{$I_{xy}$}
     \end{subfigure}%
     ~
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/prewitt_edge}
+        \includegraphics[height=2.5in]{images/prewitt_edge}
         \caption{Edge map}
     \end{subfigure}
     \caption{Prewitt operator}
-\end{figure*}
+\end{figure}
 
 Noted that since Prewitt kernel can be decomposed, $G_x$ can be written as 
 \begin{equation}
@@ -172,18 +172,18 @@ Both Sobel filter and Prewitt filter are very effective at providing good edge m
 The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref{eq:edge_map} as well.
 
 
-\begin{figure*}[ht!]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/sobel_x}
+        \includegraphics[height=2.5in]{images/sobel_x}
         \caption{$I_x$}
         \label{fig:sobel_x}
     \end{subfigure}%
     ~ 
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/sobel_y}
+        \includegraphics[height=2.5in]{images/sobel_y}
         \caption{$I_y$}
         \label{fig:sobel_y}
     \end{subfigure}
@@ -191,17 +191,17 @@ The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref
     \vskip\baselineskip
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/sobel_xy}
+        \includegraphics[height=2.5in]{images/sobel_xy}
         \caption{$I_{xy}$}
     \end{subfigure}%
     ~
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/sobel_edge}
+        \includegraphics[height=2.5in]{images/sobel_edge}
         \caption{Edge map}
     \end{subfigure}
     \caption{Sobel operator}
-\end{figure*}
+\end{figure}
 
 \subsection*{Second-order edge detection}
 \paragraph*{Laplacian of Gaussian}
@@ -227,17 +227,17 @@ To include a smoothing Gaussian lowpass filter, combine the Laplacian and Gaussi
 \end{equation}
 To utilize functions from previous homework, the calculation is still split instead of using a single kernel.
 
-\begin{figure*}[ht!]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/log_raw}
+        \includegraphics[height=2.5in]{images/log_raw}
         \caption{$I_1$}
     \end{subfigure}%
     ~ 
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/log_g}
+        \includegraphics[height=2.5in]{images/log_g}
         \caption{$LPF(I_1)$}
         \label{fig:log_g}
     \end{subfigure}
@@ -245,21 +245,66 @@ To utilize functions from previous homework, the calculation is still split inst
     \vskip\baselineskip
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/log_log}
+        \includegraphics[height=2.5in]{images/log_log}
         \caption{$LoG(I_1)$}
         \label{fig:log_log}
     \end{subfigure}%
     ~
     \begin{subfigure}[t]{0.5\textwidth}
         \centering
-        \includegraphics[height=3in]{images/log_edge}
+        %TODO missing edge map
+        %\includegraphics[height=2.5in]{images/log_edge}
         \caption{Edge map}
     \end{subfigure}
     \caption{LoG}
-\end{figure*}
+\end{figure}
 Both \autoref{fig:log_g} and \autoref{fig:log_log} uses kernel size of 5 and $\sigma=1$. \autoref{fig:log_log} is ranged from $\lbrack -1, 1 \rbrack$. 
 
-\paragraph*{Difference of Gaussians}
+\paragraph*{Difference of Gaussians} is a feature enhancement method that involves the subtraction of one blurred version of an original image from another less blurred version of the original. 
+In other word, first-order derivative of the Gaussian blurred image.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_s2}
+        \caption{$K_1$, $\sigma=2$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_s5}
+        \caption{$K_2$, $\sigma=5$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_kernel}
+        \caption{$K = K_2-K_1$}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:dog_kernel}
+\end{figure}
+
+\autoref{fig:dog_kernel} is the kernel used in this section, which is the result of subtracting Gaussian kernel of $\sigma = 5$ and $\sigma=2$.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/dog_grad}
+        \caption{DoG}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        %TODO edge map
+        %\includegraphics[height=2.5in]{images/dog_kernel}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:dog}
+\end{figure}
 
 \subsection*{Canny edge detection}
 \paragraph*{Step 1: Noise reduction}
@@ -276,6 +321,86 @@ Both \autoref{fig:log_g} and \autoref{fig:log_log} uses kernel size of 5 and $\s
 
 \section*{Problem 2}
 \subsection*{Edge crisping}
+Basic operation is based on the unsharp filter
+\begin{equation}
+	C(x, y) = I_3(x, y) - K_n(\sigma) \ast I_3(x, y)
+\end{equation}
+
+\noindent
+while $n$ is the kernel size and $\sigma$ is the standard deviation of the Gaussian function.
+\autoref{fig:crisp_demo} demonstrates the generic effect of an unsharp filter.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_raw}
+        \caption{$I_3$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_smooth}
+        \caption{$K \ast I_3$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_crisp}
+        \caption{$C$}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:crisp_demo}
+\end{figure}
+where $n$ is 15 and $\sigma$ is 5. One can easily distinguish the edge of the Milky Way and high visibility stars.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n5s5}
+        \caption{$n=5, \sigma=5$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s5}
+        \caption{$n=15, \sigma=5$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n25s5}
+        \caption{$n=25, \sigma=5$}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s1}
+        \caption{$n=15, \sigma=1$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s10}
+        \caption{$n=15, \sigma=10$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s100}
+        \caption{$n=15, \sigma=100$}
+    \end{subfigure}%
+    \caption{LoG}
+    \label{fig:crisp_tune}
+\end{figure}
+
+While both increasing the kernel size and $\sigma$ enhance the result, increasing the kernel size while locking the $\sigma$ (first row in \autoref{fig:crisp_tune}) keeps the impulse noises indicates by the stars, which is reasonable due to the fact that out-skirt of the subtracted kernel is mostly zero, which is effectively a smaller blur kernel.
+
+The second row in \autoref{fig:crisp_tune} increase the $\sigma$ while keep the kernel size at $n=5$, gradually increase the weighting of the surrounding pixels, hence the signals of stars gradually diminished (lower left region). 
+
+When taking into consideration greater variety of the edge differences, aka, increase $n$, edge difference is more profound, due to considering less localized variations.
+Increasing the $\sigma$ increases the differences per variation in pixel intensity, hence the features has greater contrast when comparing results between $n=15$ and $\sigma=5, 10$.
 
 \subsection*{Warping}
 
