@@ -4,9 +4,13 @@ function [H, varargout] = histogram(I, nbins)
 
 I = I(:);
 if ~isinteger(I)
-    I = double(I) / max(I);
-    m = 0;
+    if sum(I < 0) > 0
+        m = -1;
+    else
+        m = 0;
+    end
     M = 1;
+    I = double(I) / max(abs(I));
     nbins_def = 256;
 else
     t = class(I);
