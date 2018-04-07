@@ -126,5 +126,20 @@ Itmp = abs(Ilog);
 Iedge = I1xy > mean(Ilog(:))+2*std(I1xy(:));
 
 %% Difference of Gaussians (DOG)
+K1 = gaussf2(25, 2);
+K2 = gaussf2(25, 5);
+
+figure('Name', 'Kernel', 'NumberTitle', 'off');
+
+K = K2-K1;
+
+surf(K);
+xlim([0, 25]), ylim(xlim), zlim([-0.05, 0.05]);
+%title('K = K_2-K_1');
+set(gca, 'FontSize', 14);
+
+Idog = imconv2(I1, K);
+Idog = Idog / max(abs(Idog(:)));
+Idog = Idog+1;
 
 %% Canny edge detection
