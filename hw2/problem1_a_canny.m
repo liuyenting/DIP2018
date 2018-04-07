@@ -52,7 +52,7 @@ I1_2th((I1_2th >= 67.5 & I1_2th < 112.5) | ...
 I1_2th((I1_2th >= 112.5 & I1_2th < 157.5) | ...
        (I1_2th >= 292.5 & I1_2th < 337.5)) = 135; 
    
-I1_3 = zeros(size(I1));
+I1_3 = zeros(sz);
 for y = 2:sz(1)-1
     for x = 2:sz(2)-1
         if I1_2th(y, x) == 0
@@ -75,5 +75,31 @@ imshow(I1_3, []);
 title('Step 3');
 set(gca, 'FontSize', 14);
 
-%% Hysteretic thresholding
+%% Hysteretic thresholding and connected components (8)
+lo = 0.4;
+hi = 0.5;
 
+% adapt to actual range
+lo = lo * max(I1_3(:));
+hi = hi * max(I1_3(:));
+
+I1_4 = ones(sz) * -1;
+% simple cases
+I1_4(I1_3 < lo) = 0;
+I1_4(I1_3 > hi) = 1;
+% connected neighbor
+for y = 2:sz(1)-1
+    for x = 2:sz(2)-1
+        if I1_4(y, x) < 0
+            I1_4(y, x) = I1_3(y+1, x) > hi || I1_3(y-1, x) > hi || ...
+                         I1_3(y, x+1) > hi || I1_3(y, x-1) > hi || ...
+                         I1_3(y-1, x-1) > hi || I1_3(y-1, x+1) > hi || ...
+                         I1_3(y+1, x+1) > hi || I1_3(y+1, x-1) > hi;
+        end
+    end
+end
+
+subplot(1, 5, 5);
+imshow(I1_4, []);
+title('Step 4');
+set(gca, 'FontSize', 14);

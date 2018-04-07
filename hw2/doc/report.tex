@@ -311,14 +311,93 @@ In other word, first-order derivative of the Gaussian blurred image.
 \subsection*{Canny edge detection}
 \paragraph*{Step 1: Noise reduction}
 A simple Gaussian lowpass filter is suffice for this task. $\sigma$ is chose to be 5.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=2.5in]{images/canny_1}
+    \caption{Noise reduction}
+\end{figure}
 
 \paragraph*{Step 2: Compute gradient magnitude and orientation}
+The Sobel operator used in previous section
+\begin{equation}
+\begin{cases}
+	G_x = \begin{bmatrix}
+		1 & 0 & -1 \\ 2 & 0 & -2 \\ 1 & 0 & -1 
+	\end{bmatrix} \ast I \\
+	G_y = \begin{bmatrix}
+		1 & 2 & 1 \\ 0 & 0 & 0 \\ -1 & -2 & -1
+	\end{bmatrix} \ast I
+\end{cases}
+\end{equation}
+was applied here as well, with gradients calculated as
+\begin{equation}
+	\nabla I(x, y) = G(x, y) = \sqrt{G_x^2 + G_y^2}
+\end{equation}
+and
+\begin{equation}
+	\Theta(x, y) = tan^{-1}\frac{G_y}{G_x}
+\end{equation}
+$\Theta$ was wrap around from $[-180, 180]$ degrees to $[0, 360]$ to help through the mind blowing if-else clauses (please see the script for details).
 
-\paragraph*{Step 3: Non-maximal suppression}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_sxy}
+        \caption{Magnitude}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_sth}
+        \caption{Orientation, $[0, 360]$ degrees}
+    \end{subfigure}
+    \caption{Sobel operator}
+\end{figure}
 
-\paragraph*{Step 4: Hysteretic thresholding}
+\paragraph*{Step 3: Non-maximal suppression} searches its nearest neighbor along the edge normal.
+\begin{equation}
+	I(x, y) = \begin{cases}
+		I(x, y), \text{for } I(x, y) > I(x^\prime, y^\prime) \text{ and } I(x, y) > I(x^{\prime\prime}, y^{\prime\prime})\\
+		0, \text{otherwise}
+	\end{cases}
+\end{equation}
+where $I(x^\prime, y^\prime)$ and $I(x^{\prime\prime}, y^{\prime\prime})$ are pre-determined by sorting the gradient directions to 0, 45, 90, or 135 degrees (\autoref{fig:canny_ori}).
 
-\paragraph*{Step 5: Connected component labeling}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_ori}
+        \caption{Sorted orientation map}
+        \label{fig:canny_ori}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_3}
+        \caption{Suppression result}
+    \end{subfigure}
+    \caption{Non-maximal suppression}
+\end{figure}
+
+\paragraph*{Step 4: Hysteresis thresholding} 
+follows the instructions, 
+\begin{equation}
+I(x, y) = 
+\begin{cases}
+1, I(x, y) > T_H \\
+0, I(x, y) < T_L \\
+1, \text{8-connected}
+\end{cases}
+\end{equation}
+where $T_H$ and $T_L$ are the upper and lower strict boundary. Pixels that falls in between is determined by its 8-connected neighbor for its true nature.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=2.5in]{images/canny_4}
+    \caption{Hysteresis thresholding, $T_H = 0.5$, $T_L = 0.4$}
+\end{figure}
+This is the final result.
 
 \subsection*{Edges of noisy image}
 Since the noise is periodic, by analyzing the frequency domain, we can extract the components (\autoref{fig:freq_domain_masked}) through auto-correlation of the frequency domain and find the peaks through donut-shaped masking. Diameter of the peak mask is 5 pixels.
