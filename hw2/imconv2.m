@@ -1,6 +1,12 @@
 function J = imconv2(I, K)
 %IMCONV2 Convolve a kernel naively.
-%   TBA
+%   J = IMCONV2(I, K) filters the 2D array I with the filter K. I can be
+%   logical or standard sparse numeric array of any class, yet, the result
+%   J will be of class double.
+%
+%   Each element of the output J is computed using floating point math.
+%   Boundaries are computed by mirror-reflecting the array across the array
+%   border while considering its odd-even nature.
 
 sz = size(I);
 
