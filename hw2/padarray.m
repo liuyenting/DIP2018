@@ -32,6 +32,7 @@ end
 
 function J = zeropad(I, psz)
 
+sz = size(I);
 J = zeros(sz+2*psz, 'like', I);
 J(psz(1)+1:end-psz(1), psz(2)+1:end-psz(2)) = I;
 
