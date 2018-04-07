@@ -320,6 +320,62 @@ In other word, first-order derivative of the Gaussian blurred image.
 \paragraph*{Step 5: Connected component labeling}
 
 \subsection*{Edges of noisy image}
+Since the noise is periodic, by analyzing the frequency domain, we can extract the components (\autoref{fig:freq_domain_masked}) through auto-correlation of the frequency domain and find the peaks through donut-shaped masking. Diameter of the peak mask is 5 pixels.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_abs_I2}
+        \caption{$log(\vert FT(I_2) \vert)$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/mask_X}
+        \caption{Components masked}
+        \label{fig:freq_domain_masked}
+    \end{subfigure}
+    \caption{Frequency domain}
+\end{figure}
+\noindent
+This leads to
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_before}
+        \caption{Before filtering ($I_2$)}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_after}
+        \caption{After filtering}
+    \end{subfigure}
+    \caption{Filtering}
+    \label{fig:stripe_filter}
+\end{figure}
+\noindent
+Though we can further masking the harmonic frequency components, for this homework, this should be enough to continue.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_before_edge}
+        \caption{Before filtering}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_after_edge}
+        \caption{After filtering}
+    \end{subfigure}
+    \caption{Edge map comparison}
+    \label{fig:stripe_edges}
+\end{figure}
+
+To exaggerate the effect of filtering, I choose to use Robert operator with lower-then-normal threshold -- cut at average instead of above 2 S.D. -- palm region in \autoref{fig:stripe_edges} can clearly see that the filtering has indeed done its job.
 
 \section*{Problem 2}
 \subsection*{Edge crisping}
@@ -429,8 +485,10 @@ Using reverse lookup of the following equations
     \caption{Warping with $sin$ functions}
     \label{fig:warp}
 \end{figure}
+Though Prof. Lee told us something interesting will show up, \autoref{fig:warp} is, somehow, quite disappointing :(
 
 \section*{Bonus}
+
 
 \end{document}
               
