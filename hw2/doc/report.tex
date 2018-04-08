@@ -566,7 +566,100 @@ Using reverse lookup of the following equations
 Though Prof. Lee told us something interesting will show up, \autoref{fig:warp} is, somehow, quite disappointing :(
 
 \section*{Bonus}
+I implement a simple rolling ball algorithm using combination of erosion then dilation through a ball-shaped structure element.
+\autoref{fig:sample4} shows that relative intensity between features are maintained, while non-uniform background illumination is roughly removed as requested by Prof. Lee. 
 
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_sample4}
+        \caption{Before}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_bkgsub}
+        \caption{After}
+    \end{subfigure}
+    \caption{Sample 4}
+    \label{fig:sample4}
+\end{figure}
+
+Ball diameter is chosen to be 60 pixels instead of 15, determined by the size of features in the sample image - larger components roughly have diameter of 60, while smaller one is 15 - though using larger diameter may risk removing the smaller features. From \autoref{fig:background_diff}, they would not matter much, only the larger components have dramatic intensity change when switching size. \autoref{fig:background_60} indicates that background is removed more thoroughly (aggressively).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_blo}
+        \caption{15 pixels}
+        \label{fig:background_15}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_bhi}
+        \caption{60 pixels}
+        \label{fig:background_60}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_bd}
+        \caption{(b)-(a)}
+        \label{fig:background_diff}
+    \end{subfigure}
+    \caption{Background isolated by different ball size}
+    \label{fig:background}
+\end{figure}
+\noindent
+Background determined by different ball diameter is illustrated in \autoref{fig:background}.
+Smaller components are visible in \autoref{fig:background_15} as described in previous paragraph.
+
+If contrast-limited adaptive histogram equalization (CLAHE) is applied, the result is even better. CAUTION, CLAHE IS APPLIED THROUGH IMAGEJ INSTEAD OF USING MATLAB, CLAHE DEMO IS ONLY FOR PROOF-OF-CONCEPT. Block size is 65, number of bins per block is 256, slope limitation is 3.0.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_bkgsub}
+        \caption{Rolling ball}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_clahe}
+        \caption{CLAHE}
+    \end{subfigure}
+    \caption{CLAHE for sample 4}
+    \label{fig:sample4_clahe}
+\end{figure}
+
+Another sample image,
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5}
+        \caption{Original}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5_hi}
+        \caption{Rolling ball}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5_clahe}
+        \caption{CLAHE}
+        \label{fig:sample5_clahe}
+    \end{subfigure}
+    \caption{Background isolated by different ball size}
+    \label{fig:sample5}
+\end{figure}
+Though CLAHE can limit exaggerated noise in constant intensity region, \autoref{fig:sample5_clahe} shows that slope of 2 is not enough for noise suppression, yet, if we further decrease the slope limitation, CLAHE degrade into generic adaptive local histogram equalization.
 
 \end{document}
               
