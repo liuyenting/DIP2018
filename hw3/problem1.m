@@ -59,3 +59,5 @@ subplot(1, 2, 2);
 imshow(S);
 title('S');
 set(gca, 'FontSize', 14);
+
+imwrite(S*255, 'doc/images/S.png');
