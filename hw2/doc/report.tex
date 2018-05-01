@@ -1,0 +1,665 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% limit to particular location
+\usepackage{float}
+
+% graphics
+\usepackage{graphicx}
+% for subfigures
+\usepackage{subcaption}
+
+% better ref links
+\usepackage{hyperref}
+
+% footnote in footer
+\newcommand{\fancyfootnotetext}[2]{%
+  \fancypagestyle{dingens}{%
+    \fancyfoot[LO,RE]{\parbox{7cm}{\footnotemark[#1]\footnotesize #2}}%
+  }%
+  \thispagestyle{dingens}%
+}
+
+\lhead{HW2}
+\chead{Digital Image Processing}
+\rhead{B03902036}
+
+
+\begin{document}
+
+
+\section*{Problem 1}
+\subsection*{First-order edge detection}
+\paragraph*{Robert filter} calculates diagonal edge gradients (\autoref{eq:robert_op}), susceptible to fluctuations and provides no information about edge orientation.
+
+\begin{equation}
+\label{eq:robert_op}
+\begin{cases}
+	G_x = \begin{bmatrix}
+		1 & 0 \\ 0 & -1 
+	\end{bmatrix} \ast I \\
+	G_y = \begin{bmatrix}
+		0 & 1 \\ -1 & 0
+	\end{bmatrix} \ast I
+\end{cases}
+\end{equation}
+
+\noindent
+Gradient map is composed of
+\begin{equation}
+\label{eq:gx_gy_gxy}
+	\nabla I(x, y) = G(x, y) = \sqrt{G_x^2 + G_y^2}
+\end{equation}
+and the edge map is determined by
+\begin{equation}
+\label{eq:edge_map}
+E = 
+\begin{cases}
+	1, 2 \text{ S.D.}(\sim 5\%) \\
+	0, \text{otherwise}
+\end{cases}
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/robert_x}
+        \caption{$I_x$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/robert_y}
+        \caption{$I_y$}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/robert_xy}
+        \caption{$I_{xy}$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/robert_edge}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{Robert operator}
+\end{figure}
+
+\paragraph*{Prewitt filter} is a discrete differentiation operator, which behaves similar to the Sobel operator by computing the gradient for the image intensity function as well.
+It makes use of the maximum directional gradient. Though it is easy to implement, it is very sensitive to noise as well.
+
+\begin{equation}
+\label{eq:robert_op}
+\begin{cases}
+	G_x = \begin{bmatrix}
+		-1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 
+	\end{bmatrix} \ast I\\
+	G_y = \begin{bmatrix}
+		-1 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & 1 & 1
+	\end{bmatrix} \ast I
+\end{cases}
+\end{equation}
+The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref{eq:edge_map} as well.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/prewitt_x}
+        \caption{$I_x$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/prewitt_y}
+        \caption{$I_y$}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/prewitt_xy}
+        \caption{$I_{xy}$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/prewitt_edge}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{Prewitt operator}
+\end{figure}
+
+Noted that since Prewitt kernel can be decomposed, $G_x$ can be written as 
+\begin{equation}
+	G_x = \begin{bmatrix}
+		-1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 
+	\end{bmatrix} \ast I
+	= \begin{bmatrix}
+		1 \\ 1 \\ 1 
+	\end{bmatrix} \begin{bmatrix}
+ 		-1 & 0 & 1	
+	\end{bmatrix}
+	\ast I
+\end{equation}
+which essentially means that it computes the gradient with smoothing, since it can be decomposed as the products of an averaging and a differential kernel.
+
+\paragraph*{Sobel filter} detects edges where the gradient magnitude is high. 
+This makes the Sobel edge detector more sensitive to diagonal edge than horizontal (\autoref{fig:sobel_x}) and vertical edges (\autoref{fig:sobel_y}). 
+Both Sobel filter and Prewitt filter are very effective at providing good edge maps.
+
+\begin{equation}
+\begin{cases}
+	G_x = \begin{bmatrix}
+		1 & 0 & -1 \\ 2 & 0 & -2 \\ 1 & 0 & -1 
+	\end{bmatrix} \ast I \\
+	G_y = \begin{bmatrix}
+		1 & 2 & 1 \\ 0 & 0 & 0 \\ -1 & -2 & -1
+	\end{bmatrix} \ast I
+\end{cases}
+\end{equation}
+
+\noindent
+The final gradient result calculates through \autoref{eq:gx_gy_gxy} and \autoref{eq:edge_map} as well.
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/sobel_x}
+        \caption{$I_x$}
+        \label{fig:sobel_x}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/sobel_y}
+        \caption{$I_y$}
+        \label{fig:sobel_y}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/sobel_xy}
+        \caption{$I_{xy}$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/sobel_edge}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{Sobel operator}
+\end{figure}
+
+\subsection*{Second-order edge detection}
+If there is a significant spatial change in the second-derivative, an edge is detected. Second-order derivative operators are more sophisticated methods, yet, they are also very noise-sensitive. 
+
+\paragraph*{Laplacian of Gaussian}
+Laplacian filters are derivative filters used to find areas of rapid changing edges in images.
+
+\begin{equation}
+	\nabla^2 f(x, y) = \frac{\partial^2 f(x, y)}{\partial x^2} + \frac{\partial^2 f(x, y)}{\partial y^2}
+\end{equation}
+
+Since derivative filters are very sensitive to noise, it is common to smooth the image using a Gaussian filter before applying the Laplacian.
+
+A possible approximation for the effect of the Laplacian is 
+\begin{equation}
+	K_L = \begin{bmatrix}
+		0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0
+	\end{bmatrix}
+\end{equation}
+One can reverse the sign of the elements of this negative Laplacian, but it does not affect the outcome.
+
+To include a smoothing Gaussian lowpass filter, combine the Laplacian and Gaussian functions to obtain the result.
+\begin{equation}
+	K_{LoG} = -\frac{1}{\pi \sigma^4} \lbrack 1-\frac{x^2+y^2}{2 \sigma^2} \rbrack e^{-\frac{x^2 + y^2}{2 \sigma^2}}
+\end{equation}
+To utilize functions from previous homework, the calculation is still split instead of using a single kernel.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_raw}
+        \caption{$I_1$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_g}
+        \caption{$LPF(I_1)$}
+        \label{fig:log_g}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_log}
+        \caption{$LoG(I_1)$}
+        \label{fig:log_log}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_edge}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{LoG}
+\end{figure}
+Both \autoref{fig:log_g} and \autoref{fig:log_log} uses kernel size of 5 and $\sigma=1$. \autoref{fig:log_log} is ranged from $\lbrack -1, 1 \rbrack$. 
+
+\paragraph*{Difference of Gaussians} is a feature enhancement method that involves the subtraction of one blurred version of an original image from another less blurred version of the original. 
+In other word, first-order derivative of the Gaussian blurred image.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_s2}
+        \caption{$K_1$, $\sigma=2$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_s5}
+        \caption{$K_2$, $\sigma=5$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/dog_kernel}
+        \caption{$K = K_2-K_1$}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:dog_kernel}
+\end{figure}
+
+\autoref{fig:dog_kernel} is the kernel used in this section, which is the result of subtracting Gaussian kernel of $\sigma = 5$ and $\sigma=2$.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/dog_grad}
+        \caption{DoG}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/dog_edge}
+        \caption{Edge map}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:dog}
+\end{figure}
+
+\subsection*{Canny edge detection}
+\paragraph*{Step 1: Noise reduction}
+A simple Gaussian lowpass filter is suffice for this task. $\sigma$ is chose to be 5.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=2.5in]{images/canny_1}
+    \caption{Noise reduction}
+\end{figure}
+
+\paragraph*{Step 2: Compute gradient magnitude and orientation}
+The Sobel operator used in previous section
+\begin{equation}
+\begin{cases}
+	G_x = \begin{bmatrix}
+		1 & 0 & -1 \\ 2 & 0 & -2 \\ 1 & 0 & -1 
+	\end{bmatrix} \ast I \\
+	G_y = \begin{bmatrix}
+		1 & 2 & 1 \\ 0 & 0 & 0 \\ -1 & -2 & -1
+	\end{bmatrix} \ast I
+\end{cases}
+\end{equation}
+was applied here as well, with gradients calculated as
+\begin{equation}
+	\nabla I(x, y) = G(x, y) = \sqrt{G_x^2 + G_y^2}
+\end{equation}
+and
+\begin{equation}
+	\Theta(x, y) = tan^{-1}\frac{G_y}{G_x}
+\end{equation}
+$\Theta$ was wrapped around from $[-180, 180]$ degrees to $[0, 360]$ to help through the mind blowing if-else clauses (please see the script for details).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_sxy}
+        \caption{Magnitude}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_sth}
+        \caption{Orientation, $[0, 360]$ degrees}
+    \end{subfigure}
+    \caption{Sobel operator}
+\end{figure}
+
+\paragraph*{Step 3: Non-maximal suppression} searches its nearest neighbor along the edge normal.
+\begin{equation}
+	I(x, y) = \begin{cases}
+		I(x, y), \text{for } I(x, y) > I(x^\prime, y^\prime) \text{ and } I(x, y) > I(x^{\prime\prime}, y^{\prime\prime})\\
+		0, \text{otherwise}
+	\end{cases}
+\end{equation}
+where $I(x^\prime, y^\prime)$ and $I(x^{\prime\prime}, y^{\prime\prime})$ are pre-determined by sorting the gradient directions to 0, 45, 90, or 135 degrees (\autoref{fig:canny_ori}).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_ori}
+        \caption{Sorted orientation map}
+        \label{fig:canny_ori}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/canny_3}
+        \caption{Suppression result}
+    \end{subfigure}
+    \caption{Non-maximal suppression}
+\end{figure}
+
+\paragraph*{Step 4: Hysteresis thresholding} 
+follows the instructions, 
+\begin{equation}
+I(x, y) = 
+\begin{cases}
+1, I(x, y) > T_H \\
+0, I(x, y) < T_L \\
+1, \text{8-connected}
+\end{cases}
+\end{equation}
+where $T_H$ and $T_L$ are the upper and lower strict boundary. Pixels that falls in between is determined by its 8-connected neighbor for its true nature.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=2.5in]{images/canny_4}
+    \caption{Hysteresis thresholding, $T_H = 0.5$, $T_L = 0.4$}
+\end{figure}
+This is the final result.
+
+\subsection*{Edges of noisy image}
+Since the noise is periodic, by analyzing the frequency domain, we can extract the components (\autoref{fig:freq_domain_masked}) through auto-correlation of the frequency domain and find the peaks through donut-shaped masking. Diameter of the peak mask is 5 pixels.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/log_abs_I2}
+        \caption{$log(\vert FT(I_2) \vert)$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/mask_X}
+        \caption{Components masked}
+        \label{fig:freq_domain_masked}
+    \end{subfigure}
+    \caption{Frequency domain}
+\end{figure}
+\noindent
+This leads to
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_before}
+        \caption{Before filtering ($I_2$)}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_after}
+        \caption{After filtering}
+    \end{subfigure}
+    \caption{Filtering}
+    \label{fig:stripe_filter}
+\end{figure}
+\noindent
+Though we can further masking the harmonic frequency components, for this homework, this should be enough to continue.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_before_edge}
+        \caption{Before filtering}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/stripe_after_edge}
+        \caption{After filtering}
+    \end{subfigure}
+    \caption{Edge map comparison}
+    \label{fig:stripe_edges}
+\end{figure}
+
+To exaggerate the effect of filtering, I choose to use Robert operator with lower-then-normal threshold -- cut at average instead of above 2 S.D. -- palm region in \autoref{fig:stripe_edges} can clearly see that the filtering has indeed done its job.
+
+\section*{Problem 2}
+\subsection*{Edge crisping}
+Basic operation is based on the unsharp filter
+\begin{equation}
+	C(x, y) = I_3(x, y) - K_n(\sigma) \ast I_3(x, y)
+\end{equation}
+
+\noindent
+while $n$ is the kernel size and $\sigma$ is the standard deviation of the Gaussian function.
+\autoref{fig:crisp_demo} demonstrates the generic effect of an unsharp filter.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_raw}
+        \caption{$I_3$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_smooth}
+        \caption{$K \ast I_3$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_crisp}
+        \caption{$C$}
+    \end{subfigure}
+    \caption{LoG}
+    \label{fig:crisp_demo}
+\end{figure}
+where $n$ is 15 and $\sigma$ is 5. One can easily distinguish the edge of the Milky Way and high visibility stars.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n5s5}
+        \caption{$n=5, \sigma=5$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s5}
+        \caption{$n=15, \sigma=5$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n25s5}
+        \caption{$n=25, \sigma=5$}
+    \end{subfigure}
+    ~
+    \vskip\baselineskip
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s1}
+        \caption{$n=15, \sigma=1$}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s10}
+        \caption{$n=15, \sigma=10$}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/crisp_n15s100}
+        \caption{$n=15, \sigma=100$}
+    \end{subfigure}%
+    \caption{LoG}
+    \label{fig:crisp_tune}
+\end{figure}
+
+While both increasing the kernel size and $\sigma$ enhance the result, increasing the kernel size while locking the $\sigma$ (first row in \autoref{fig:crisp_tune}) keeps the impulse noises indicates by the stars, which is reasonable due to the fact that out-skirt of the subtracted kernel is mostly zero, which is effectively a smaller blur kernel.
+
+The second row in \autoref{fig:crisp_tune} increase the $\sigma$ while keep the kernel size at $n=5$, gradually increase the weighting of the surrounding pixels, hence the signals of stars gradually diminished (lower left region). 
+
+When taking into consideration greater variety of the edge differences, aka, increase $n$, edge difference is more profound, due to considering less localized variations.
+Increasing the $\sigma$ increases the differences per variation in pixel intensity, hence the features has greater contrast when comparing results between $n=15$ and $\sigma=5, 10$.
+
+\subsection*{Warping}
+Using reverse lookup of the following equations
+\begin{equation}
+\begin{cases}
+	x(u, v) = u + 20 sin(\frac{2 \pi}{2} \frac{y}{512} ) \\
+	y(u, v) = v + 20 sin(\frac{2 \pi}{3} \frac{x}{512} )
+\end{cases}
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/warp_mask}
+        \caption{Mask}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/warp_c}
+        \caption{D}
+    \end{subfigure}
+    \caption{Warping with $sin$ functions}
+    \label{fig:warp}
+\end{figure}
+Though Prof. Lee told us something interesting will show up, \autoref{fig:warp} is, somehow, quite disappointing :(
+
+\section*{Bonus}
+I implement a simple rolling ball algorithm using combination of erosion then dilation through a ball-shaped structure element.
+\autoref{fig:sample4} shows that relative intensity between features are maintained, while non-uniform background illumination is roughly removed as requested by Prof. Lee. 
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_sample4}
+        \caption{Before}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_bkgsub}
+        \caption{After}
+    \end{subfigure}
+    \caption{Sample 4}
+    \label{fig:sample4}
+\end{figure}
+
+Ball diameter is chosen to be 60 pixels instead of 15, determined by the size of features in the sample image - larger components roughly have diameter of 60, while smaller one is 15 - though using larger diameter may risk removing the smaller features. From \autoref{fig:background_diff}, they would not matter much, only the larger components have dramatic intensity change when switching size. \autoref{fig:background_60} indicates that background is removed more thoroughly (aggressively).
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_blo}
+        \caption{15 pixels}
+        \label{fig:background_15}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_bhi}
+        \caption{60 pixels}
+        \label{fig:background_60}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_bd}
+        \caption{(b)-(a)}
+        \label{fig:background_diff}
+    \end{subfigure}
+    \caption{Background isolated by different ball size}
+    \label{fig:background}
+\end{figure}
+\noindent
+Background determined by different ball diameter is illustrated in \autoref{fig:background}.
+Smaller components are visible in \autoref{fig:background_15} as described in previous paragraph.
+
+If contrast-limited adaptive histogram equalization (CLAHE) is applied, the result is even better. CAUTION, CLAHE IS APPLIED THROUGH IMAGEJ INSTEAD OF USING MATLAB, CLAHE DEMO IS ONLY FOR PROOF-OF-CONCEPT. Block size is 65, number of bins per block is 256, slope limitation is 3.0.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_bkgsub}
+        \caption{Rolling ball}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics[height=2.5in]{images/roll_clahe}
+        \caption{CLAHE}
+    \end{subfigure}
+    \caption{CLAHE for sample 4}
+    \label{fig:sample4_clahe}
+\end{figure}
+
+Another sample image,
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5}
+        \caption{Original}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5_hi}
+        \caption{Rolling ball}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/roll_sample5_clahe}
+        \caption{CLAHE}
+        \label{fig:sample5_clahe}
+    \end{subfigure}
+    \caption{Background isolated by different ball size}
+    \label{fig:sample5}
+\end{figure}
+Though CLAHE can limit exaggerated noise in constant intensity region, \autoref{fig:sample5_clahe} shows that slope of 2 is not enough for noise suppression, yet, if we further decrease the slope limitation, CLAHE degrade into generic adaptive local histogram equalization.
+
+\end{document}
+              
