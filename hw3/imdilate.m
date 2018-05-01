@@ -1,5 +1,5 @@
-function J = imerode(I, SE)
-%IMERODE Erode image.
+function J = imdilate(I, SE)
+%IMDILATE Dilate image.
 %   Detailed explanation goes here
 
 sz = size(I);
@@ -22,7 +22,7 @@ for j = 1:ksz(2)
             P = T;
             firstrun = false;
         else
-            P = P & T;
+            P = P | T;
         end
     end
 end
