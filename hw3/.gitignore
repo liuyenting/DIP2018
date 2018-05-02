@@ -1,0 +1,8 @@
+# MATLAB temp files
+*~
+
+# sample images
+data/
+
+# Texpad temps
+.texpadtmp/
