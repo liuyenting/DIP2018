@@ -63,7 +63,7 @@
 \end{figure}
 Boundary extraction is composed of erosion and its complement
 \begin{equation}
-	B = I_1 \& ~(I_1 \ominus SE)
+	B = I_1 \wedge \sim (I_1 \ominus SE)
 \end{equation}
 where $SE$ is the structural element, square in this case.
 When the sides of $SE$ increases, the more the erosion is applied on $I_1$, causing more blanked region appeared after $\& ~(I_1 \ominus SE)$, leading to thicker edges.
@@ -107,7 +107,7 @@ During writing of the erosion algorithm, I also found out the slide misplaced re
 \end{figure}
 The implementation try to follow the implementation from textbook, which requires two set of lookup tables. General operation is 
 \begin{equation}
-	G = X \cap \lbrack \bar{M} \cup P \rbrack
+	G = X \cap \lbrack \sim M \cup P \rbrack
 \end{equation}
 where $X$ is the input image, $G$ is the output image, $M$ is the conditional marker determined in the process, and $P$ is the inhibiting variable.
 
@@ -166,7 +166,7 @@ The comparison is composed of two parts
 \begin{equation}
 \begin{cases}
 	P_1 = (X \vee K_M) \wedge K_C \\
-	P_2 = (T \wedge \tilde{K_M}) \wedge (K_C \wedge \tilde{K_M})\\
+	P_2 = (T \wedge \sim K_M) \wedge (K_C \wedge \sim K_M)\\
 \end{cases}
 \label{eq:unconditional_or_eq_eq}
 \end{equation}
@@ -201,7 +201,7 @@ Under this consensus, \autoref{eq:unconditional_or_eq_eq} can be modified as
 \begin{equation}
 \begin{cases}
 	P_1 = \sim ((X \vee K_M) \vee K_C) \\
-	P_2 = (T \wedge \tilde{K_M}) \wedge (K_C \wedge \tilde{K_M})\\
+	P_2 = (T \wedge \sim K_M) \wedge (K_C \wedge \sim K_M)\\
 \end{cases}
 \label{eq:unconditional_or_eq_eq}
 \end{equation}
@@ -218,6 +218,85 @@ Under this consensus, \autoref{eq:unconditional_or_eq_eq} can be modified as
 \end{table}
 
 If short segments are unwanted, pruning algorithm can be employed. In my implementation, some objects seem to being thinned too aggressively, however, I haven't found the pitfalls in the pipeline for the time being. 
+
+\section*{Problem 2}
+\subsection*{Law's method}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5in]{images/M}
+    \caption{Filters}
+    \label{fig:law_filters}
+\end{figure}
+\autoref{fig:law_filters} shows the results after applying 3-by-3 filters described in the slides, oriented from left-to-right, top-to-bottom are low-to-high pass.
+
+The result is not quite clear in this case, however, the simple energy function of windows size 15,
+\begin{equation}
+	T = \cap \cap_{(i, j) \in w} M(i, j)^2
+\end{equation}
+yields fabulous result.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5in]{images/T}
+    \caption{Energy}
+    \label{fig:law_energy}
+\end{figure}
+\autoref{fig:law_energy} oriented the same way as \autoref{fig:law_filters}, in this case, we can easily see the whirls have their frequency components evenly distributed, while the cloth on the lower right is relatively high frequency, compares to the brick wall on the upper left side.
+
+Using classic K-mean clustering algorithm with three classes and randomly initialized seeds, results in acceptable result.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=2.5in]{images/K}
+    \caption{Segmented reuslt}
+    \label{fig:kmean}
+\end{figure}
+
+However, blobs can be observed in the middle section of the whirls, one may remove them by removing objects smaller then specified size.
+
+\subsection*{Texture swapping}
+Efos-Leung algorithm is adapted for this task, courtesy to the MATLAB implementation presented by {\it asteroidhouse} on GitHub, with small modification, one can adapt the algorithm for partial texture synthesis (patch the regions, relatively smaller), instead of full synthesis (generate entire image from a small patch). 
+
+The algorithm generates the texture pixel-wise, outwards from the initial seed, using pixels inside a defined windows as the context. 
+The basic idea is modeling the patch as a generalized Markov chain, similar to the $n$-gram idea in natural language processing. 
+Therefore, one build a probability for tables for each $n$-gram pixel combinations through repeatedly sample in the window, and synthesize new pixels by observing the most probable intensity in the sampled $n$-gram "corpus".
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/tex1}
+        \caption{Class 1}
+        \label{fig:synth_1}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/tex2}
+        \caption{Class 2}
+        \label{fig:synth_2}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[t]{0.3\textwidth}
+        \centering
+        \includegraphics[height=2in]{images/tex3}
+        \caption{Class 3}
+        \label{fig:synth_3}
+    \end{subfigure}%
+    \caption{Synthesized}
+    \label{fig:synth}
+\end{figure}
+
+Using random patch size pick in the regions, no larger than 128-by-128, due to deadline, window size is configured to 4, and synthesis result size is restricted to 128-by-128 instead of full size 512-by-512. 
+\autoref{fig:synth} shows the synthesized result of three identified categories retrieved from previous section.
+Synthesis iteration is limited to 1000 due to limited time as well, instead of ensuring all the pixels are determined.
+
+As one may expected, insufficient window size will result in information lost, causing the texture unable to be continuous, visualized as the crack in \autoref{fig:synth_2}.
+The brick pattern requires much larger window to capture the grid lines, this will significantly increase the synthesis time, very limited window and limited iteration cycle not only lead to incomplete output, but also incorrect pattern in \autoref{fig:synth_1}. 
+
+For pattern that has high frequency components, visualized in \autoref{fig:law_energy}, relatively small window and less iteration is required as hypothesized, the result in \autoref{fig:synth_3} is pleasing as well.
+
+\section*{Bonus}
 
 \end{document}
               
