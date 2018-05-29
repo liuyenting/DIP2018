@@ -1,4 +1,4 @@
-clearvars; close all;
+% clearvars; close all;
 
 fn = fullfile('data', 'TrainingSet.raw');
 sz = [450, 248];
@@ -6,7 +6,9 @@ sz = [450, 248];
 I = imread(fn, sz, 'gray');
 
 %% Black-on-white to white-on-black
-I = 255-I;
+thr = (max(I(:)) - min(I(:))) / 2;
+% black-on-white
+I = I < thr; 
 
 %% Character splits
 % number of characters per sides
@@ -36,7 +38,16 @@ end
 tsz = 32;
 
 for i = 1:numel(chkey)
-    chval{i} = uniresmpl(chval{i}, [tsz, tsz]);
+    temp = chval{i};
+    
+    % find range 
+    [y, x] = find(temp);
+    x_min = min(x); x_max = max(x);
+    
+    % crop to range
+    temp = temp(min(y):max(y), x_min:x_max);
+    
+    chval{i} = uniresmpl(temp, [tsz, tsz]);
 end
 
 figure('Name', 'Character Maps', 'NumberTitle', 'off'); 
@@ -52,7 +63,13 @@ end
 
 %% Projection sum
 for i = 1:numel(chkey)
-    chval{i} = [sum(chval{i}, 1); sum(chval{i}, 2).'];
+    xs = cumsum(sum(chval{i}, 2).' + 1); 
+    xs = (xs-min(xs)) / (max(xs)-min(xs));
+    ys = cumsum(sum(chval{i}, 1) + 1); 
+    ys = (ys-min(ys)) / (max(ys)-min(ys)); 
+     
+    % generate resampled curve
+    chval{i} = interp1(xs, ys, linspace(0, 1, tsz));
 end
 
 %% Save features
