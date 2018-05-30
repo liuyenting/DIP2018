@@ -1,6 +1,6 @@
 clearvars; close all;
 
-fn = fullfile('data', 'sample2.raw');
+fn = fullfile('data', 'sample1.raw');
 sz = [390, 125];
 
 I = imread(fn, sz, 'gray');
@@ -11,23 +11,13 @@ thr = (max(I(:)) - min(I(:))) / 2;
 I = I < thr; 
 
 %% (Optional) Filter
-J = medfilt2(I, 3);
-
-figure('Name', 'Filter', 'NumberTitle', 'off'); 
-subplot(1, 2, 1); imagesc(I); axis image; title('Before');
-subplot(1, 2, 2); imagesc(J); axis image; title('After');
-
-I = J;
-
-figure; imagesc(I); axis image;
+I = medfilt2(I, 3);
 
 %% Split characters
 J = imdilate(I, ones(7, 7));
 [J, nch] = bwlabel(J, 8, 0);
 % ignore dilated regions
 J(~I) = 0;
-
-figure; imagesc(J); axis image;
 
 % crop
 ch = repmat(struct('image', {}, 'xpos', {}), 1, nch);
@@ -64,17 +54,18 @@ nf = numel(chval);
 for c = 1:nch
     temp = ch(c).image;
     
-    xs = cumsum(sum(temp, 2).' + 1); 
-    xs = (xs-min(xs)) / (max(xs)-min(xs));
-    ys = cumsum(sum(temp, 1) + 1); 
-    ys = (ys-min(ys)) / (max(ys)-min(ys));  
-    
-    v = interp1(xs, ys, linspace(0, 1, tsz));
+%     xs = cumsum(sum(temp, 2).' + 1); 
+%     xs = (xs-min(xs)) / (max(xs)-min(xs));
+%     ys = cumsum(sum(temp, 1) + 1); 
+%     ys = (ys-min(ys)) / (max(ys)-min(ys));  
+%     
+%     v = interp1(xs, ys, linspace(0, 1, tsz));
     
     r_m = +Inf; ich = -1;
     rs = zeros(1, nf);
     for i = 1:nf
-        r = abs(chval{i} - v);
+%         r = abs(chval{i} - v);
+        r = abs(chval{i} - temp);
         r = sum(r(:));
         
         if r < r_m

@@ -50,6 +50,15 @@ for i = 1:numel(chkey)
     chval{i} = uniresmpl(temp, [tsz, tsz]);
 end
 
+figure('Position', [440 598 560 113]);
+for iy = 1:nch(2)
+    i = (iy-1)*nch(1) + 1;
+    subplot(1, nch(2), iy);
+    imagesc(chval{i});
+    axis image;
+    colormap('gray');
+end
+
 figure('Name', 'Character Maps', 'NumberTitle', 'off'); 
 for iy = 1:nch(2)
     for ix = 1:nch(1)
@@ -62,15 +71,15 @@ for iy = 1:nch(2)
 end
 
 %% Projection sum
-for i = 1:numel(chkey)
-    xs = cumsum(sum(chval{i}, 2).' + 1); 
-    xs = (xs-min(xs)) / (max(xs)-min(xs));
-    ys = cumsum(sum(chval{i}, 1) + 1); 
-    ys = (ys-min(ys)) / (max(ys)-min(ys)); 
-     
-    % generate resampled curve
-    chval{i} = interp1(xs, ys, linspace(0, 1, tsz));
-end
+% for i = 1:numel(chkey)
+%     xs = cumsum(sum(chval{i}, 2).' + 1); 
+%     xs = (xs-min(xs)) / (max(xs)-min(xs));
+%     ys = cumsum(sum(chval{i}, 1) + 1); 
+%     ys = (ys-min(ys)) / (max(ys)-min(ys)); 
+%      
+%     % generate resampled curve
+%     chval{i} = interp1(xs, ys, linspace(0, 1, tsz));
+% end
 
 %% Save features
 save('features.mat', 'chkey', 'chval');
